@@ -1,0 +1,15 @@
+{
+  "name": "smart-app-automatizacion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "puppeteer": "^24.1.1"
+  }
+}
