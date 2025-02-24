@@ -31,29 +31,98 @@ export const handleIframe = async (page) => {
     }, 2000);
   });
 
-  // Selecciona el span con el texto específico
-  const spanEspecifico = await iframe.$$eval("span", spans => {
-    const encontrado = spans.find(span => span.textContent.trim() === "CLASE 62");
+  await iframe.$$eval("span", (spans) => {
+    const encontrado = spans.find(
+      (span) => span.textContent.trim() === "CLASE 67"
+    );
     if (encontrado) {
-      console.log(encontrado.textContent);
-      encontrado.click();
+      const trPadre = encontrado.closest("tr"); // Buscar el padre <tr>
+      if (trPadre) {
+        console.log(trPadre);
+        trPadre.click(); // Hacer click en el <tr>
+      }
     }
-    console.log('here->',spans);
-  });// Cambia 'Bienvenido' por el texto que buscas
+  });
 
-  // Selecciona el valor '2' en el select dentro del iframe
-  //await iframeContent.select("#vTPEAPROBO", "2");
+  // Selecciona el span con el texto específico
+  await iframe.evaluate(async () => {
+    const spans = [...document.querySelectorAll("span")]; // Obtiene todos los <span>
+    const finded = spans.find(
+      (span) => span.textContent.trim() === "CLASE 67"
+    );
 
-  /*
- await new Promise((resolve) => {
-   setTimeout(() => {
-     resolve();
-   }, 5000);
+    if (finded) {
+      const tr = finded.closest("tr");
+      tr.focus();
+
+      const events = ["mousedown", "mouseout", "click"];
+      events.forEach((evento) => {
+        const event = new MouseEvent(evento, {
+          bubbles: true,
+          cancelable: true,
+        });
+        tr.dispatchEvent(event);
+        console.log(`Evento ${evento} disparado en el <tr>`);
+      });
+
+      console.log("Haciendo click en Padre:", tr);
+
+      const input = document.querySelector('input[value="Asignar"]');
+      console.log(input);
+
+      if (input) {
+        input.click();
+        tr.focus();
+      } else {
+        console.log("No se encontró el input");
+      }
+    }
   });
   
-  const frames = await page.frames();
-  const iframeContent = frames[1];
-  const x = await iframeContent.$eval(".TextBlock", el => el.innerText);
-  console.log(x)
-  */
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 3000);
+  });
+
+
+
+  const iframeSelector2 = "iframe#gxp1_ifrm";
+  const iframeElementHandle2 = await page.$(iframeSelector2);
+  const iframe2 = await iframeElementHandle2.contentFrame();
+
+  await iframe2.evaluate(() => {
+    const selects = document.querySelectorAll("select"); // Selecciona el <select>
+    console.log(selects)
+    selects.forEach( async(select) => {
+      if (select && select.id === "vREGCONREG") {
+        console.log("Seleccionando SANTAFE en el <select>");
+        const option = [...select.options].find(
+          (opt) => opt.textContent.trim() === "SANTAFE"
+        );
+        console.log(select.options);
+        if (option) {
+          select.value = option.value; // Cambia el valor del select
+          select.dispatchEvent(new Event("change", { bubbles: true })); // Dispara el evento change
+          console.log("Seleccionado:", option.textContent);
+        } else {
+          console.log("No se encontró la opción SANTAFE");
+        }
+      } else if (select && select.id === "vDIA") {
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 3000);
+        });
+        console.log("Seleccionando día en el", select);
+          select.value = 3; // Cambia el valor del select
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+      } else {
+        console.log("No se encontró el <select>");
+      }
+    });
+
+  });
+
 };
