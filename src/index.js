@@ -1,6 +1,5 @@
 import { runAutomation } from './controllers/automationController.js';
 import cron from 'node-cron';
-import { log } from './utils/logger.js';
 
 // Programar la tarea para que corra todos los días a las 12:40 PM
 /*
